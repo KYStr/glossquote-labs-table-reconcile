@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="description" content="Match two local CSV files by a unique key. Review same, left-only, right-only, and changed rows, then download a report and JSON.">
+  <title>Compare Two CSV Tables | Find Missing and Changed Rows</title>
+  <link rel="stylesheet" href="/styles/app.css">
+  <script type="module" src="/js/app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#workspace">Skip to reconciliation workspace</a>
+  <header class="topbar"><span class="product">Reconcile two tables</span><nav aria-label="Product and language"><a href="https://glossquote.com/en/index.html">All Gloss Tools</a><a href="/index.html" lang="zh-TW" aria-label="切換為繁體中文">繁體中文</a></nav></header>
+  <div class="shell">
+    <nav class="steps" aria-label="Reconciliation steps"><a href="#files">Choose files</a><a href="#mapping">Map columns</a><a href="#results">Review differences</a></nav>
+    <main id="workspace" class="canvas">
+      <div class="introduction"><p class="preview">Local candidate · browser acceptance pending</p><h1>See exactly what changed between two lists</h1><p>Choose a unique key to find missing rows, extra rows, and different values under the same ID.</p></div>
+      <noscript><p class="notice">Enable JavaScript to process CSV files locally in this page.</p></noscript>
+      <section id="files" aria-labelledby="file-heading"><h2 id="file-heading">1. Choose two CSV files</h2><p id="file-limits" class="help">Each file: up to 1 MiB, 5,000 data rows, and 30 columns. UTF-8, comma-separated CSV with a header row only.</p><div class="sources"><div class="source"><label for="file-left">Left CSV</label><input id="file-left" type="file" accept=".csv,text/csv" aria-describedby="file-limits meta-left error-left"><p id="meta-left" class="file-meta">No file selected.</p><p id="error-left" class="field-error"></p></div><div class="source"><label for="file-right">Right CSV</label><input id="file-right" type="file" accept=".csv,text/csv" aria-describedby="file-limits meta-right error-right"><p id="meta-right" class="file-meta">No file selected.</p><p id="error-right" class="field-error"></p></div></div></section>
+      <section id="mapping" aria-labelledby="map-heading">
+        <h2 id="map-heading">2. Confirm the column mapping</h2><p id="mapping-empty" class="empty">Load both CSV files to select the unique key and the fields to compare.</p>
+        <div id="mapping-content" hidden><p class="help">Columns with identical names are suggested for comparison. Check every pair. Column names can differ; each side may use a column only once per list.</p>
+          <fieldset id="mapping-controls" disabled><legend class="sr-only">Map columns</legend>
+            <h3>Unique key (1–3 pairs)</h3><p id="key-help" class="help">Choose columns that uniquely identify a row. Multiple pairs form a composite key. Empty or duplicate keys stop the entire run.</p><div id="key-pairs"></div><button type="button" id="add-key" class="quiet">Add key column</button>
+            <h3>Compared fields (at least 1 pair)</h3><p id="field-help" class="help">Only these fields are compared. Key columns may also be included. All values remain exact strings.</p><div id="field-pairs"></div><button type="button" id="add-field" class="quiet">Add compared field</button>
+            <details class="settings"><summary>Reconciliation settings</summary><label for="key-mode">Unique key matching</label><select id="key-mode" aria-describedby="trim-help"><option value="exact">Exact strings (default)</option><option value="trim">Trim surrounding whitespace in keys only</option></select><p id="trim-help" class="help">Changes key matching only. Original rows and compared values are never trimmed. Numbers, dates, case, and Unicode are not normalized.</p></details>
+            <details class="samples"><summary>Inspect all headers and the first data row</summary><div class="sample-columns"><div id="sample-left"></div><div id="sample-right"></div></div></details>
+            <label class="confirmation"><input id="confirm-mapping" type="checkbox" aria-describedby="mapping-feedback"><span>I have checked the key and every compared-field mapping</span></label><p id="mapping-feedback" class="help"></p>
+          </fieldset>
+        </div>
+        <div class="actions"><button id="run" class="primary" type="button" disabled>Reconcile tables</button><button id="cancel" type="button" hidden>Cancel reconciliation</button><button id="reset" class="quiet" type="button">Clear all data</button></div>
+        <p id="status" role="status" aria-live="polite" aria-atomic="true">Choose two CSV files to start.</p><progress id="progress" hidden max="1" value="0" aria-label="Checking unique keys and comparing rows…"></progress>
+        <div id="error-box" class="notice error" hidden><h3>Fix this before reconciling</h3><p id="work-error"></p><p id="key-summary" class="data"></p></div>
+      </section>
+      <section id="results" aria-labelledby="result-heading"><h2 id="result-heading">3. Review all four categories</h2><p id="result-summary" class="empty">Reconcile the files to see counts, source data-row numbers, and complete differences here.</p>
+        <div class="categories" role="group" aria-label="Choose a result category"><button type="button" data-category="same" aria-pressed="false" disabled>Same <span id="count-same">0</span></button>
+<button type="button" data-category="leftOnly" aria-pressed="false" disabled>Left only <span id="count-leftOnly">0</span></button>
+<button type="button" data-category="rightOnly" aria-pressed="false" disabled>Right only <span id="count-rightOnly">0</span></button>
+<button type="button" data-category="changed" aria-pressed="false" disabled>Changed fields <span id="count-changed">0</span></button></div>
+        <div id="result-content" hidden><p class="help">Data-row numbers start at 1 after the header. Expand long values to read them. Downloads retain all content.</p><div id="result-table" class="table-region" role="region" tabindex="0" aria-label="Scrollable reconciliation details"></div><div class="pager"><button id="prev" type="button">Previous page</button><p id="page-position"></p><button id="next" type="button">Next page</button></div></div>
+        <div id="export-controls" hidden><p class="help">The two UTF-8 reports may total up to 16 MiB. Exceeding the limit disables both downloads; page results remain readable. Reports contain source values; store them carefully.</p><button id="prepare" type="button" class="primary">Confirm results and prepare both downloads</button><div class="downloads"><a id="download-json" class="button" download="table-reconcile.json" hidden>Download complete JSON</a><a id="download-text" class="button" download="table-reconcile.txt" hidden>Download text report</a></div></div>
+      </section>
+      <section class="reading" aria-labelledby="privacy-heading"><h2 id="privacy-heading">Files are processed in this page</h2><p>No account, file upload, browser storage, or telemetry. Clearing or leaving releases page references and download links. It does not delete files you downloaded or guarantee secure memory erasure.</p></section>
+      <section class="reading faq" aria-labelledby="help-heading"><h2 id="help-heading">Before you start</h2><details><summary>Will it treat 001 and 1 as the same key?</summary><p>No. Values are compared as exact strings by default.</p></details>
+<details><summary>Do I need to upload my files to an account?</summary><p>No. The page processes selected files in memory.</p></details>
+<details><summary>What happens when a key is duplicated?</summary><p>Reconciliation stops and identifies the conflicting rows; it never guesses a pairing.</p></details></section>
+      <footer>Gloss Tools by GlossQuote</footer>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "mode": "release-candidate",
+  "origin": "https://reconcile.glossquote.com",
+  "toolSlug": "table-reconcile",
+  "files": [
+    {
+      "path": "_headers",
+      "bytes": 446,
+      "sha256": "3a7837e56b2ac82f10ee7db45e1db402100c2c247c538e2eaf2699c48e2f9617"
+    },
+    {
+      "path": "en/index.html",
+      "bytes": 8292,
+      "sha256": "f1a5764f1792ac716576445fe90040a726db471a38fa5308d8398bc392d1a88e"
+    },
+    {
+      "path": "index.html",
+      "bytes": 7977,
+      "sha256": "dc4da36b629e68bcae4b6c95a6cb6313ff1d6c7a8f506e1bcc5de975ee2fe4ce"
+    },
+    {
+      "path": "js/app.js",
+      "bytes": 15623,
+      "sha256": "6fed972c3e1199daf520bf809e6ad94a20f7d46fbea9c369f7d776566c94dcf1"
+    },
+    {
+      "path": "js/core/csv.mjs",
+      "bytes": 3860,
+      "sha256": "6e5437b0138d28282a39c898c269749f792f843fc75c36988a9d6ae4c484c013"
+    },
+    {
+      "path": "js/core/errors.mjs",
+      "bytes": 183,
+      "sha256": "1e8dd3b4440213d22c472b78ec9f7bdfdb935e67285d89daba29a62bc931be0c"
+    },
+    {
+      "path": "js/core/export.mjs",
+      "bytes": 2609,
+      "sha256": "89e1a3d4cc1026908d432b9aad6d18c0446ec035a75ba786a43b3f916bbb7a5d"
+    },
+    {
+      "path": "js/core/reconcile.mjs",
+      "bytes": 5810,
+      "sha256": "3c8ec61df5961c3da2dc1ed43c92e3fc09e847d0e8739989d38172494cf05a51"
+    },
+    {
+      "path": "js/core/session.mjs",
+      "bytes": 8061,
+      "sha256": "51700be4a9fb3b24b04f46f63802fc9b53dad18f409674813f00811bc86b9580"
+    },
+    {
+      "path": "js/i18n.mjs",
+      "bytes": 14633,
+      "sha256": "96e1f227286dd2d0263beb236e916c9433b3b954d7d14f09193b6158dffcce5c"
+    },
+    {
+      "path": "robots.txt",
+      "bytes": 77,
+      "sha256": "e9cf937620c9361d71145cba5f7c6021ab369e492958acdfb628c0c3611742b4"
+    },
+    {
+      "path": "sitemap.xml",
+      "bytes": 249,
+      "sha256": "772ff89c5b56775960abb0f6b6d4e484614264636e61059d678d606e293eedaa"
+    },
+    {
+      "path": "styles/app.css",
+      "bytes": 10506,
+      "sha256": "c755eedf624bfd20db7cc84267da8004f4137e4f8c29c50c2a12b6b344b93737"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "_headers",
+      "bytes": 450,
+      "sha256": "26984a067759774480233873f9eea1cf12eece87f926a63bedefbacdde5fc965"
+    },
+    {
+      "path": "en/index.html",
+      "bytes": 8000,
+      "sha256": "07ca70d8e8c73bdc355b90361424a50f9198ecad8fd811e45735819c3fddd0ae"
+    },
+    {
+      "path": "index.html",
+      "bytes": 7689,
+      "sha256": "3a0fe90f56daf6d0f6f4343045057e47bb18ef58afcb076ca72eae3e8bd1cec5"
+    },
+    {
+      "path": "js/app.js",
+      "bytes": 15623,
+      "sha256": "6fed972c3e1199daf520bf809e6ad94a20f7d46fbea9c369f7d776566c94dcf1"
+    },
+    {
+      "path": "js/core/csv.mjs",
+      "bytes": 3860,
+      "sha256": "6e5437b0138d28282a39c898c269749f792f843fc75c36988a9d6ae4c484c013"
+    },
+    {
+      "path": "js/core/errors.mjs",
+      "bytes": 183,
+      "sha256": "1e8dd3b4440213d22c472b78ec9f7bdfdb935e67285d89daba29a62bc931be0c"
+    },
+    {
+      "path": "js/core/export.mjs",
+      "bytes": 2609,
+      "sha256": "89e1a3d4cc1026908d432b9aad6d18c0446ec035a75ba786a43b3f916bbb7a5d"
+    },
+    {
+      "path": "js/core/reconcile.mjs",
+      "bytes": 5810,
+      "sha256": "3c8ec61df5961c3da2dc1ed43c92e3fc09e847d0e8739989d38172494cf05a51"
+    },
+    {
+      "path": "js/core/session.mjs",
+      "bytes": 8061,
+      "sha256": "51700be4a9fb3b24b04f46f63802fc9b53dad18f409674813f00811bc86b9580"
+    },
+    {
+      "path": "js/i18n.mjs",
+      "bytes": 14633,
+      "sha256": "96e1f227286dd2d0263beb236e916c9433b3b954d7d14f09193b6158dffcce5c"
+    },
+    {
+      "path": "robots.txt",
+      "bytes": 26,
+      "sha256": "331ea9090db0c9f6f597bd9840fd5b171830f6e0b3ba1cb24dfa91f0c95aedc1"
+    },
+    {
+      "path": "styles/app.css",
+      "bytes": 10506,
+      "sha256": "c755eedf624bfd20db7cc84267da8004f4137e4f8c29c50c2a12b6b344b93737"
+    }
+  ]
+}

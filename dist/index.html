@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="description" content="在本機用唯一鍵核對兩份 CSV，找出一致、僅左、僅右及不同欄位，下載差異報告與 JSON。">
+  <title>兩份 CSV 表格對帳｜找出缺列與欄位差異</title>
+  <link rel="stylesheet" href="/styles/app.css">
+  <script type="module" src="/js/app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#workspace">跳到對帳工作區</a>
+  <header class="topbar"><span class="product">兩份表格對帳</span><nav aria-label="產品與語言"><a href="https://glossquote.com/index.html">所有 Gloss Tools</a><a href="/en/index.html" lang="en" aria-label="Switch language to English">English</a></nav></header>
+  <div class="shell">
+    <nav class="steps" aria-label="對帳步驟"><a href="#files">選擇檔案</a><a href="#mapping">欄位配對</a><a href="#results">差異結果</a></nav>
+    <main id="workspace" class="canvas">
+      <div class="introduction"><p class="preview">本地候選版 · 尚未完成瀏覽器驗收</p><h1>把兩份清單逐列對起來</h1><p>用你指定的唯一鍵，找出缺列、多列及同編號不同資料。</p></div>
+      <noscript><p class="notice">請啟用 JavaScript，才能在此頁本地處理 CSV。</p></noscript>
+      <section id="files" aria-labelledby="file-heading"><h2 id="file-heading">1. 選兩份 CSV</h2><p id="file-limits" class="help">每份上限 1 MiB、5,000 筆資料、30 欄。只接受 UTF-8、逗號分隔且有標題列的 CSV。</p><div class="sources"><div class="source"><label for="file-left">左側 CSV</label><input id="file-left" type="file" accept=".csv,text/csv" aria-describedby="file-limits meta-left error-left"><p id="meta-left" class="file-meta">尚未選擇檔案。</p><p id="error-left" class="field-error"></p></div><div class="source"><label for="file-right">右側 CSV</label><input id="file-right" type="file" accept=".csv,text/csv" aria-describedby="file-limits meta-right error-right"><p id="meta-right" class="file-meta">尚未選擇檔案。</p><p id="error-right" class="field-error"></p></div></div></section>
+      <section id="mapping" aria-labelledby="map-heading">
+        <h2 id="map-heading">2. 確認左右欄位</h2><p id="mapping-empty" class="empty">兩份 CSV 載入後，在這裡選擇唯一鍵與比較欄位。</p>
+        <div id="mapping-content" hidden><p class="help">已建議名稱完全相同的比較欄。請逐組確認；左右欄名可以不同，每側的欄位在同一組清單中只能用一次。</p>
+          <fieldset id="mapping-controls" disabled><legend class="sr-only">欄位配對</legend>
+            <h3>唯一鍵（1–3 組）</h3><p id="key-help" class="help">選能唯一識別每筆資料的欄位。多組欄位會組成複合鍵。空鍵或重複鍵會停止整次對帳。</p><div id="key-pairs"></div><button type="button" id="add-key" class="quiet">增加鍵欄位</button>
+            <h3>比較欄位（至少 1 組）</h3><p id="field-help" class="help">只比較這些欄位。鍵欄位也可以列入，所有值一律保留原字串。</p><div id="field-pairs"></div><button type="button" id="add-field" class="quiet">增加比較欄位</button>
+            <details class="settings"><summary>對帳設定</summary><label for="key-mode">唯一鍵比對方式</label><select id="key-mode" aria-describedby="trim-help"><option value="exact">逐字比對（預設）</option><option value="trim">只對鍵值去除前後空白</option></select><p id="trim-help" class="help">只改變唯一鍵的判斷。原始資料與比較欄位不會 trim，也不轉換數字、日期、大小寫或 Unicode。</p></details>
+            <details class="samples"><summary>查看全部欄名與第一筆資料</summary><div class="sample-columns"><div id="sample-left"></div><div id="sample-right"></div></div></details>
+            <label class="confirmation"><input id="confirm-mapping" type="checkbox" aria-describedby="mapping-feedback"><span>我已確認唯一鍵及所有比較欄位的左右配對</span></label><p id="mapping-feedback" class="help"></p>
+          </fieldset>
+        </div>
+        <div class="actions"><button id="run" class="primary" type="button" disabled>開始對帳</button><button id="cancel" type="button" hidden>取消對帳</button><button id="reset" class="quiet" type="button">清除全部資料</button></div>
+        <p id="status" role="status" aria-live="polite" aria-atomic="true">選兩份 CSV 開始。</p><progress id="progress" hidden max="1" value="0" aria-label="正在建立唯一鍵並逐列比對…"></progress>
+        <div id="error-box" class="notice error" hidden><h3>需要修正後再對帳</h3><p id="work-error"></p><p id="key-summary" class="data"></p></div>
+      </section>
+      <section id="results" aria-labelledby="result-heading"><h2 id="result-heading">3. 檢查四類結果</h2><p id="result-summary" class="empty">完成對帳後，這裡會顯示每類筆數、來源資料列及完整差異。</p>
+        <div class="categories" role="group" aria-label="選擇結果分類"><button type="button" data-category="same" aria-pressed="false" disabled>一致 <span id="count-same">0</span></button>
+<button type="button" data-category="leftOnly" aria-pressed="false" disabled>僅左 <span id="count-leftOnly">0</span></button>
+<button type="button" data-category="rightOnly" aria-pressed="false" disabled>僅右 <span id="count-rightOnly">0</span></button>
+<button type="button" data-category="changed" aria-pressed="false" disabled>欄位不同 <span id="count-changed">0</span></button></div>
+        <div id="result-content" hidden><p class="help">資料列從標題後第一筆起算為 1。長值可展開；下載會保留全部內容。</p><div id="result-table" class="table-region" role="region" tabindex="0" aria-label="可捲動的對帳明細"></div><div class="pager"><button id="prev" type="button">上一頁</button><p id="page-position"></p><button id="next" type="button">下一頁</button></div></div>
+        <div id="export-controls" hidden><p class="help">兩份 UTF-8 報告合計最多 16 MiB。超限會同時停用兩份下載，頁面結果仍可閱讀。報告包含來源列值，請妥善保管。</p><button id="prepare" type="button" class="primary">確認結果並準備兩份下載</button><div class="downloads"><a id="download-json" class="button" download="table-reconcile.json" hidden>下載完整 JSON</a><a id="download-text" class="button" download="table-reconcile.txt" hidden>下載文字報告</a></div></div>
+      </section>
+      <section class="reading" aria-labelledby="privacy-heading"><h2 id="privacy-heading">檔案只在目前頁面處理</h2><p>不需帳號，不上傳檔案，不使用瀏覽器儲存或遙測。清除或離開會釋放頁面引用及下載連結，不會刪除你已下載的檔案，也不保證安全抹除記憶體。</p></section>
+      <section class="reading faq" aria-labelledby="help-heading"><h2 id="help-heading">使用前先了解</h2><details><summary>會把 001 和 1 當相同嗎？</summary><p>不會。預設把所有值當字串逐字比較。</p></details>
+<details><summary>需要上傳檔案或帳號嗎？</summary><p>不需要；檔案在目前頁面記憶體中處理。</p></details>
+<details><summary>有重複編號怎麼辦？</summary><p>工具會停止對帳並指出衝突資料列，不會任意配對。</p></details></section>
+      <footer>Gloss Tools by GlossQuote</footer>
+    </main>
+  </div>
+</body>
+</html>
