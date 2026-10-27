@@ -10,6 +10,11 @@
       "sha256": "3a7837e56b2ac82f10ee7db45e1db402100c2c247c538e2eaf2699c48e2f9617"
     },
     {
+      "path": "_redirects",
+      "bytes": 65,
+      "sha256": "9e47a2579b08f461b1124de1e42a1bde7a79ca29d77401104f6f432d8be90e1e"
+    },
+    {
       "path": "en/index.html",
       "bytes": 8292,
       "sha256": "f1a5764f1792ac716576445fe90040a726db471a38fa5308d8398bc392d1a88e"

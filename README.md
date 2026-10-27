@@ -28,11 +28,11 @@ npm run check:release
 
 For a local preview, npm run dev serves only 127.0.0.1:4222 and does not open a browser. public/ and dist/ are noindex previews. The production-format output is generated in release-artifacts/site/; it has the planned canonical URLs and removes exactly two preview banners. Building is offline and does not deploy anything.
 
-wrangler.jsonc is static-only, with a UTC-safe compatibility date pinned to 2026-10-24. Its only domain is reconcile.glossquote.com; workers.dev, preview URLs, CLI metrics, logs and traces are disabled. Deployment is handled separately and was not performed in this source-publication milestone.
+wrangler.jsonc is static-only, with a UTC-safe compatibility date pinned to 2026-10-24. Its only domain is reconcile.glossquote.com; workers.dev, preview URLs, CLI metrics, logs and traces are disabled. The generated _redirects file contains exactly three 301 rules: / to /index.html, /en to /en/index.html, and /en/ to /en/index.html. The other 13 generated files are unchanged. Deployment is handled separately; this source patch has not been deployed.
 
 ## 固定來源與測試資料 / Provenance and fixtures
 
-[SOURCE-MANIFEST.json](SOURCE-MANIFEST.json) records all 33 frozen source files. [RELEASE-MANIFEST.json](RELEASE-MANIFEST.json) is the expected generated release manifest. The current source-set is c49494930c7fe8e5df00384a53dfe031b40e71faded1de7f5a171a884650c8b3; the expected release manifest SHA-256 is fa158ccabe8346e1df911d731d1d163a09d035766ad19f6cac3654107befdd1c.
+[SOURCE-MANIFEST.json](SOURCE-MANIFEST.json) records all 33 frozen source files. [RELEASE-MANIFEST.json](RELEASE-MANIFEST.json) is the expected generated release manifest. The current source-set is 2227cedcc178331732f49827ca8c8d2e3fb32bb54d431e1717d21f22d789a932; the expected release manifest SHA-256 is 12271529426c0330d063d0fb93cbc66575bc9ec8bdfe0185c9fe051f2051f2c8.
 
 The tracked dist/ snapshot is required by a release regression test; it is a complete frozen preview, not private user data. evidence/m1/source-manifest.json is a relative-path-only historical public-input fingerprint required by the pin test. Tests create synthetic temporary copies and remove only their own fixtures. Generated release-artifacts/ remains ignored.
 

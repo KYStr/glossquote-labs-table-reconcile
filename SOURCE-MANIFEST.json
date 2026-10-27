@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "tool": "table-reconcile",
-  "revision": "M2B_UTC_DATE_CORRECTED",
-  "sourceSetSha256": "c49494930c7fe8e5df00384a53dfe031b40e71faded1de7f5a171a884650c8b3",
+  "revision": "M2C_FIXED_ENTRY_REDIRECTS",
+  "sourceSetSha256": "2227cedcc178331732f49827ca8c8d2e3fb32bb54d431e1717d21f22d789a932",
   "files": [
     {
       "path": ".gitignore",
@@ -101,8 +101,8 @@
     },
     {
       "path": "scripts/release.mjs",
-      "bytes": 13718,
-      "sha256": "ae9325e0b36c62316cd211148618f725737c856027a3460fac3a31a25fcaf867"
+      "bytes": 13874,
+      "sha256": "ff2758cf74ef1c34f751443e7b9b484b24657542ce02521ce8f3cbc9705e1734"
     },
     {
       "path": "scripts/serve.mjs",
@@ -146,8 +146,8 @@
     },
     {
       "path": "test/release.test.mjs",
-      "bytes": 19627,
-      "sha256": "8676898f56fa9b06fe61c37952b303618f9eccda3bac5112ffd19ea6f91d6768"
+      "bytes": 21714,
+      "sha256": "433767bd7f4b98ee1dfe6bd826aa0f4eea8554dfaca015a5aef7b3fe96904444"
     },
     {
       "path": "test/scaffold.test.mjs",

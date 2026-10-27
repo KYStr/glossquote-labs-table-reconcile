@@ -6,7 +6,7 @@ import { spawnSync } from 'node:child_process';
 import { ROOT, PUBLIC_FILES, sha256 } from '../scripts/files.mjs';
 import { buildRelease, checkRelease, runRelease, parseArguments, validateReleaseSeo, ORIGIN, TOOL_SLUG, SOURCE_FILES, SITE_FILES } from '../scripts/release.mjs';
 
-const parent = resolve(ROOT, 'evidence/m2a/release-fixtures');
+const parent = resolve(ROOT, 'evidence/m2c/release-fixtures');
 const origin = 'https://reconcile.glossquote.com';
 const siteFile = (root, path) => join(root, 'release-artifacts/site', path);
 const manifestFile = root => join(root, 'release-artifacts/manifest.json');
@@ -75,7 +75,7 @@ test('release destination and source pins match the accepted M1 public set', asy
   assert.equal(ORIGIN, origin); assert.equal(TOOL_SLUG, 'table-reconcile');
   const old = await readJson(join(ROOT, 'evidence/m1/source-manifest.json'));
   assert.deepEqual(SOURCE_FILES, old.files.filter(f => f.path.startsWith('public/')).map(f => ({ ...f, path: f.path.slice(7) })));
-  assert.deepEqual(SITE_FILES, [...new Set([...PUBLIC_FILES, '_headers', 'robots.txt', 'sitemap.xml'])].sort());
+  assert.deepEqual(SITE_FILES, [...new Set([...PUBLIC_FILES, '_headers', '_redirects', 'robots.txt', 'sitemap.xml'])].sort());
 });
 test('release changes only SEO heads and the exact two candidate banner nodes', async () => fixture(async root => {
   const before = await snapshot(join(root, 'public')); await buildRelease({ root });
@@ -130,14 +130,45 @@ test('manifest schema is exact, site is closed, and rebuilding is deterministic 
   assert.equal((await buildRelease({ root })).status, 'EXISTING_BYTES_VERIFIED');
   assert.deepEqual(await snapshot(join(root, 'release-artifacts')), before); assert.deepEqual(await readFile(manifestFile(root)), bytes);
 }));
+test('release adds exactly three static 301 entry redirects to the existing canonical HTML assets', async () => fixture(async root => {
+  await buildRelease({ root });
+  const bytes = await readFile(siteFile(root, '_redirects'));
+  assert.deepEqual(bytes, Buffer.from('/ /index.html 301\n/en /en/index.html 301\n/en/ /en/index.html 301\n'));
+  const rules = bytes.toString('utf8').trimEnd().split('\n').map(line => line.split(' '));
+  assert.deepEqual(rules, [['/', '/index.html', '301'], ['/en', '/en/index.html', '301'], ['/en/', '/en/index.html', '301']]);
+  for (const [, destination] of rules) assert.equal((await lstat(siteFile(root, destination.slice(1)))).isFile(), true);
+  const manifest = await readJson(manifestFile(root));
+  assert.equal(manifest.files.length, 14);
+  assert.deepEqual(manifest.files.find(file => file.path === '_redirects'), { path: '_redirects', bytes: bytes.length, sha256: sha256(bytes) });
+  assert.equal(manifest.sourceFiles.some(file => file.path === '_redirects'), false);
+  assert.equal(JSON.parse(await readFile(join(root, 'wrangler.jsonc'), 'utf8')).assets.html_handling, 'none');
+}));
+test('changed, missing, duplicate, external or unknown redirect rules fail without overwriting output', async () => fixture(async root => {
+  await buildRelease({ root });
+  const original = await readFile(siteFile(root, '_redirects'), 'utf8');
+  const edits = [
+    original.replace('/ /index.html 301', '/ /index.html 302'),
+    original.replace('/en/ /en/index.html 301\n', ''),
+    original + '/fr /en/index.html 301\n',
+    original + '/* /index.html 301\n',
+    original + '/ /en/index.html 301\n',
+    original.replace('/en /en/index.html', '/en https://example.invalid/en/index.html'),
+    original.replace('/en/ /en/index.html', '/en/ /en/index.html?extra=1'),
+    original.replace('/en /en/index.html', '/en /index.html'),
+  ];
+  for (const changed of edits) {
+    await writeFile(siteFile(root, '_redirects'), changed);
+    await unchangedFailure(root, /RELEASE_ASSET_MISMATCH/);
+  }
+}));
 test('tampered HTML/JS/header output fails without overwriting the modified file', async () => {
-  for (const path of ['index.html', 'en/index.html', 'js/app.js', '_headers']) await fixture(async root => {
+  for (const path of ['index.html', 'en/index.html', 'js/app.js', '_headers', '_redirects']) await fixture(async root => {
     await buildRelease({ root }); await writeFile(siteFile(root, path), 'modified synthetic artifact');
     await unchangedFailure(root, /RELEASE_ASSET_MISMATCH/);
   });
 });
 test('manifest + asset co-tampering is rejected even with valid recomputed hashes', async () => {
-  for (const path of ['en/index.html', 'js/app.js', 'robots.txt', '_headers', 'sitemap.xml']) await fixture(async root => {
+  for (const path of ['en/index.html', 'js/app.js', 'robots.txt', '_headers', '_redirects', 'sitemap.xml']) await fixture(async root => {
     await buildRelease({ root }); const bytes = Buffer.from('synthetic tampered bytes'); await writeFile(siteFile(root, path), bytes);
     const manifest = await readJson(manifestFile(root)); const entry = manifest.files.find(file => file.path === path);
     entry.bytes = bytes.length; entry.sha256 = sha256(bytes);
@@ -176,7 +207,7 @@ test('extra output files and empty unknown directories, including root siblings,
   });
 });
 test('missing output file/manifest and unmanaged or empty output directories fail safely', async () => {
-  for (const path of ['site/js/app.js', 'site/en/index.html', 'manifest.json']) await fixture(async root => {
+  for (const path of ['site/js/app.js', 'site/en/index.html', 'site/_redirects', 'manifest.json']) await fixture(async root => {
     await buildRelease({ root }); await unlink(join(root, 'release-artifacts', path)); await unchangedFailure(root, /MISSING_REQUIRED_FILE/);
   });
   await fixture(async root => { await mkdir(join(root, 'release-artifacts')); await unchangedFailure(root, /MISSING_REQUIRED_FILE/); });

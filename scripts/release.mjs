@@ -20,8 +20,9 @@ export const SOURCE_FILES = Object.freeze([
   { path: 'robots.txt', bytes: 26, sha256: '331ea9090db0c9f6f597bd9840fd5b171830f6e0b3ba1cb24dfa91f0c95aedc1' },
   { path: 'styles/app.css', bytes: 10506, sha256: 'c755eedf624bfd20db7cc84267da8004f4137e4f8c29c50c2a12b6b344b93737' },
 ].map(Object.freeze));
-export const SITE_FILES = Object.freeze([...new Set([...PUBLIC_FILES, 'robots.txt', '_headers', 'sitemap.xml'])].sort());
+export const SITE_FILES = Object.freeze([...new Set([...PUBLIC_FILES, 'robots.txt', '_headers', '_redirects', 'sitemap.xml'])].sort());
 const OUTPUT_FILES = Object.freeze(['manifest.json', ...SITE_FILES.map(path => `site/${path}`)]);
+const REDIRECTS = '/ /index.html 301\n/en /en/index.html 301\n/en/ /en/index.html 301\n';
 const PAGES = Object.freeze(['index.html', 'en/index.html']);
 const MANIFEST_LIMIT = 65_536;
 const CANDIDATE_BANNERS = Object.freeze({
@@ -141,6 +142,7 @@ async function expectedRelease(root) {
   }
   const output = new Map(input);
   for (const page of PAGES) { const html = releaseHtml(input.get(page), page); validateReleaseSeo(html, page); output.set(page, html); }
+  output.set('_redirects', Buffer.from(REDIRECTS));
   output.set('robots.txt', Buffer.from(`User-agent: *\nAllow: /\nSitemap: ${ORIGIN}/sitemap.xml\n`));
   const headers = input.get('_headers').toString('utf8');
   const directive = /^  X-Robots-Tag: noindex, nofollow$/gm;
